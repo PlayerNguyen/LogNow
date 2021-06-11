@@ -1,7 +1,6 @@
 package com.playernguyen.lognow.configuration;
 
 import java.io.File;
-import java.util.Arrays;
 
 import com.google.common.base.Preconditions;
 import com.osiris.dyml.DYModule;
@@ -10,8 +9,6 @@ import com.osiris.dyml.DreamYaml;
 import com.osiris.dyml.exceptions.IllegalKeyException;
 import com.osiris.dyml.exceptions.NotLoadedException;
 import com.playernguyen.lognow.LogNow;
-
-import org.bukkit.plugin.Plugin;
 
 public abstract class AbstractFileConfiguration<T extends FileConfigurationModel> implements FileConfiguration<T> {
 	private final LogNow plugin;
@@ -36,7 +33,7 @@ public abstract class AbstractFileConfiguration<T extends FileConfigurationModel
 		if (!fileModel.isEnum()) {
 			throw new IllegalStateException("fileModel must be an enum class type");
 		}
-		
+
 		// fill up the element from model to the file
 		for (T fileModelElement : fileModel.getEnumConstants()) {
 
