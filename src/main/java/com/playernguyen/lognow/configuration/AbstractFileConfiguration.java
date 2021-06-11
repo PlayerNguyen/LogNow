@@ -1,20 +1,23 @@
 package com.playernguyen.lognow.configuration;
 
 import java.io.File;
+import java.util.Arrays;
 
+import com.google.common.base.Preconditions;
 import com.osiris.dyml.DYModule;
 import com.osiris.dyml.DYValue;
 import com.osiris.dyml.DreamYaml;
 import com.osiris.dyml.exceptions.IllegalKeyException;
 import com.osiris.dyml.exceptions.NotLoadedException;
+import com.playernguyen.lognow.LogNow;
 
 import org.bukkit.plugin.Plugin;
 
 public abstract class AbstractFileConfiguration<T extends FileConfigurationModel> implements FileConfiguration<T> {
-	private final Plugin plugin;
+	private final LogNow plugin;
 	private final DreamYaml yaml;
 
-	public AbstractFileConfiguration(Plugin plugin, String fileName, Class<T> fileModel) throws Exception {
+	public AbstractFileConfiguration(LogNow plugin, String fileName, Class<T> fileModel) throws Exception {
 		this.plugin = plugin;
 
 		// check and generate folder
@@ -27,18 +30,22 @@ public abstract class AbstractFileConfiguration<T extends FileConfigurationModel
 		File currentFile = new File(dataFolder, fileName);
 		this.yaml = new DreamYaml(currentFile.getPath());
 
+		Preconditions.checkNotNull(fileModel);
+
 		// check must be an enum
 		if (!fileModel.isEnum()) {
 			throw new IllegalStateException("fileModel must be an enum class type");
 		}
-
+		
 		// fill up the element from model to the file
 		for (T fileModelElement : fileModel.getEnumConstants()) {
+
 			// divine keys by dots cleft
 			String[] keyPath = fileModelElement.getKey().split("\\.");
-			this.yaml.put(keyPath).addDefValues(new DYValue(fileModelElement.getValue().toString()))
-					.addComments(fileModelElement.getComments());
+			DYModule module = this.yaml.put(keyPath);
 
+			module.addDefValues(new DYValue(fileModelElement.getValue().toString()))
+					.setComments(fileModelElement.getComments());
 		}
 
 		// save before load
@@ -57,12 +64,12 @@ public abstract class AbstractFileConfiguration<T extends FileConfigurationModel
 
 	@Override
 	public DYValue get(T key) {
-		return yaml.get(key.getKey().split(".")).getValue();
+		return yaml.get(key.getKey().split("\\.")).getValue();
 	}
 
 	@Override
 	public DYModule set(T key, DYValue object) throws NotLoadedException, IllegalKeyException {
-		return yaml.put(key.getKey().split("|")).setValues(object);
+		return yaml.put(key.getKey().split("\\|")).setValues(object);
 	}
 
 }

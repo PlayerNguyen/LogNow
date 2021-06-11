@@ -4,7 +4,7 @@ import com.playernguyen.lognow.configuration.FileConfigurationModel;
 
 public enum SettingConfigurationModel implements FileConfigurationModel {
 
-	DEVELOPMENT_MODE("DevelopmentMode.Enable", false,
+	DEVELOPMENT_MODE_ENABLE("DevelopmentMode.Enable", false,
 			"Enhancing the code by using development tools of this plugin.|"
 					+ "This option will leak your information such as |" + "your database configuration, so be careful"),
 
@@ -12,7 +12,14 @@ public enum SettingConfigurationModel implements FileConfigurationModel {
 			" available: sqlite, mysql"),
 
 	DATABASE_SQLITE_FILE_NAME("Database.SQLiteFileName", "storage.sqlite",
-			"Database file name when the Database.Type set to sqlite.")
+			"Database file name when the Database.Type set to sqlite."),
+
+	DATABASE_MYSQL_HOST("Database.MySQL.Host", "localhost", "Database host, as default is localhost"),
+	DATABASE_MYSQL_PORT("Database.MySQL.Port", "3306", "Database port, as default is 3306"),
+	DATABASE_MYSQL_USERNAME("Database.MySQL.Username", "root", "Database username settings."),
+	DATABASE_MYSQL_PASSWORD("Database.MySQL.Password", "123", "Database password settings."),
+	DATABASE_MYSQL_DATABASE("Database.MySQL.Database", "lognow", "Database database name, as default is lognow"),
+	DATABASE_MYSQL_OPTION("Database.MySQL.Option", "?useSSL=true", "Database option parameter, as default is lognow"),
 
 	;
 
