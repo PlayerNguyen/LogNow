@@ -87,7 +87,7 @@ public final class LogNow extends JavaPlugin {
 
             this.getDebugWatcher().debug("Creating tables unless it existed ");
             DatabaseQueryBuilder.newInstance(this.getDatabaseHoster()).executeCustomUpdate(
-                    "CREATE TABLE IF NOT EXISTS lognow_user (id INT(32) NOT NULL PRIMARY KEY AUTOINCREMENT, "
+                    "CREATE TABLE IF NOT EXISTS lognow_user (id INT(32) NOT NULL PRIMARY KEY AUTO_INCREMENT, "
                             + "user_id VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL)");
 
         }
