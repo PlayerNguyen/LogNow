@@ -1,4 +1,4 @@
-package com.playernguyen.lognow.configuration;
+package com.playernguyen.lognow.configurations;
 
 /**
  * File configuration model to set configuration more specific.

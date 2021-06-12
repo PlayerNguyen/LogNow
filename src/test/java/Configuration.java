@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-import com.playernguyen.lognow.setting.SettingConfigurationModel;
+import com.playernguyen.lognow.settings.SettingConfigurationModel;
 
 import org.junit.Test;
 

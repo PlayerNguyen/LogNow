@@ -1,6 +1,6 @@
-package com.playernguyen.lognow.setting;
+package com.playernguyen.lognow.settings;
 
-import com.playernguyen.lognow.configuration.FileConfigurationModel;
+import com.playernguyen.lognow.configurations.FileConfigurationModel;
 
 public enum SettingConfigurationModel implements FileConfigurationModel {
 
@@ -20,6 +20,12 @@ public enum SettingConfigurationModel implements FileConfigurationModel {
 	DATABASE_MYSQL_PASSWORD("Database.MySQL.Password", "123", "Database password settings."),
 	DATABASE_MYSQL_DATABASE("Database.MySQL.Database", "lognow", "Database database name, as default is lognow"),
 	DATABASE_MYSQL_OPTION("Database.MySQL.Option", "?useSSL=true", "Database option parameter, as default is lognow"),
+	DATABASE_MYSQL_USER_TABLE("Database.MySQL.UserTable", "lognow_user", "Database user table"),
+
+	AUTH_HASH_ALGORITHM("Auth.HashAlgorithm", "bcrypt", "Select your hash algorithm to completely protect your ",
+			" users' password. ", "  available: bcrypt"),
+
+	BCRYPT_SALT_ROUNDS("Bcrypt.SaltRounds", "10", "Log rounds that use for hash password by bcrypt algorithm")
 
 	;
 

@@ -2,9 +2,13 @@ package com.playernguyen.lognow;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.playernguyen.lognow.setting.SettingConfiguration;
-import com.playernguyen.lognow.setting.SettingConfigurationModel;
+import com.playernguyen.lognow.hashes.HashPasswordBcrypt;
+import com.playernguyen.lognow.hashes.InterfaceHashPassword;
+import com.playernguyen.lognow.settings.SettingConfiguration;
+import com.playernguyen.lognow.settings.SettingConfigurationModel;
 import com.playernguyen.lognow.watch.DebugWatcher;
 import com.playernguyen.pndb.sql.DatabaseOptions;
 import com.playernguyen.pndb.sql.hoster.DatabaseHoster;
@@ -15,6 +19,7 @@ import com.playernguyen.pndb.sql.sqlite.DatabaseHosterSQLite;
 import com.playernguyen.pndb.sql.sqlite.DatabaseOptionsSQLite;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mindrot.jbcrypt.BCrypt;
 
 public final class LogNow extends JavaPlugin {
 
@@ -23,6 +28,7 @@ public final class LogNow extends JavaPlugin {
     private SettingConfiguration settingConfiguration;
     private DebugWatcher debugWatcher;
     private DatabaseHoster databaseHoster;
+    private InterfaceHashPassword hashSystem;
 
     @Override
     public void onEnable() {
@@ -30,10 +36,49 @@ public final class LogNow extends JavaPlugin {
         try {
             setupSetting();
             setupDatabase();
+            setupCypher();
+
+            // test, for debug
+            if (isDevelopment) {
+                testBcrypt();
+            }
         } catch (Exception e) {
             // catch all setup error
             e.printStackTrace();
         }
+    }
+
+    /**
+     * cypher setup, use for hashing password
+     * 
+     * @throws ClassNotFoundException not found library (developer process)
+     */
+    private void setupCypher() throws ClassNotFoundException {
+        String algorithm = getSettingConfiguration().get(SettingConfigurationModel.AUTH_HASH_ALGORITHM).asString();
+
+        // bcrypt
+        if (algorithm.equalsIgnoreCase("bcrypt")) {
+            this.hashSystem = new HashPasswordBcrypt(this);
+            return;
+        }
+
+        // not found algorithm
+        throw new UnsupportedOperationException(String.format("cannot found algorithm: %s ", algorithm));
+    }
+
+    /**
+     * this function call to test bcrypt
+     */
+    private void testBcrypt() {
+        this.getDebugWatcher().debug("testing bcrypt generator...");
+        List<String> hashes = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            String salt = BCrypt.gensalt(10);
+            hashes.add(BCrypt.hashpw("password" + i, salt));
+        }
+
+        this.getDebugWatcher().map(hashes, "bcrypt generator");
     }
 
     private void setupDatabase() throws SQLException {
@@ -144,5 +189,13 @@ public final class LogNow extends JavaPlugin {
      */
     public boolean isDevelopment() {
         return isDevelopment;
+    }
+
+    /**
+     * 
+     * @return hash system, use for hashing password
+     */
+    public InterfaceHashPassword getHashSystem() {
+        return hashSystem;
     }
 }

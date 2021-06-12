@@ -1,4 +1,4 @@
-package com.playernguyen.lognow.configuration;
+package com.playernguyen.lognow.configurations;
 
 import com.osiris.dyml.DYModule;
 import com.osiris.dyml.DYValue;

@@ -23,11 +23,28 @@ public class DebugWatcher {
 	/**
 	 * Build a map from iterable and print it out to console
 	 * 
-	 * @param iterable iterable object to print map
+	 * @param iterable iterable object to print as map
 	 */
 	public void map(Iterable<?> iterable) {
 		if (isDebugging()) {
 			this.plugin.getLogger().info("--- debug map ---");
+			int i = 0;
+			for (Object object : iterable) {
+				this.plugin.getLogger().info(String.format("  %d -> %s", i, object.toString()));
+				i++;
+			}
+		}
+	}
+
+	/**
+	 * Build a map from iterable with name and print it out to console
+	 * 
+	 * @param iterable iterable object to print as map.
+	 * @param name     name of the title, perform in header title.
+	 */
+	public void map(Iterable<?> iterable, String name) {
+		if (isDebugging()) {
+			this.plugin.getLogger().info(String.format("--- debug map: %s ---", name));
 			int i = 0;
 			for (Object object : iterable) {
 				this.plugin.getLogger().info(String.format("  %d -> %s", i, object.toString()));
