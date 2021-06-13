@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import com.playernguyen.lognow.LogNow;
 import com.playernguyen.lognow.core.UserProfile;
-import com.playernguyen.lognow.setting.SettingConfigurationModel;
+import com.playernguyen.lognow.settings.SettingConfigurationModel;
 import com.playernguyen.pndb.sql.query.CriteriaBuilder;
 import com.playernguyen.pndb.sql.query.CriteriaField;
 import com.playernguyen.pndb.sql.query.DatabaseQueryBuilder;
@@ -30,7 +30,7 @@ public class UserManager {
 	 * @throws SQLException sql errors catch
 	 */
 	public Optional<UserProfile> findOne(UUID uuid) throws SQLException {
-		ResultSet resultSet = DatabaseQueryBuilder.newInstance(this.plugin.getDatabaseHoster()).selectAll()
+		ResultSet resultSet = DatabaseQueryBuilder.newInstance(this.plugin.getDatabaseHoster()).selectAll(table)
 				.criteria(CriteriaBuilder.newInstance().newField(CriteriaField.equal("uuid")))
 				.executeQuery(uuid.toString());
 
@@ -43,10 +43,35 @@ public class UserManager {
 		return Optional.of(profile);
 	}
 
-	public boolean addUser(UUID uuid, String password, String email) {
-		DatabaseQueryBuilder.newInstance(plugin.getDatabaseHoster())
-			.insert(table).values("uuid", "password", "email")
-		return true;
+	/**
+	 * Create new user into database.
+	 * 
+	 * @param uuid     an uuid of user
+	 * @param password a password of user
+	 * @param email    an email of user
+	 * @return true whether added, false otherwise
+	 * @throws SQLException sql errors
+	 */
+	public boolean createUser(UUID uuid, String password, String email) throws SQLException {
+		return DatabaseQueryBuilder.newInstance(plugin.getDatabaseHoster()).insert(table)
+				.values("user_id", "password", "email")
+				.executeUpdate(uuid.toString(), plugin.getHashSystem().hash(password), email) == 1;
+	}
+
+	/**
+	 * ! ONLY WORK WHEN DEVELOPMENT MODE ENABLED.<br>
+	 * 
+	 * Reset development code.
+	 * 
+	 * @throws Exception sql errors
+	 */
+	public void reset() throws Exception {
+		if (plugin.isDevelopment()) {
+			this.plugin.getDebugWatcher().debug("resetting & truncating user table...");
+			// reset
+			DatabaseQueryBuilder.newInstance(this.plugin.getDatabaseHoster())
+					.executeCustomUpdate(String.format("TRUNCATE %s", this.table));
+		}
 	}
 
 }

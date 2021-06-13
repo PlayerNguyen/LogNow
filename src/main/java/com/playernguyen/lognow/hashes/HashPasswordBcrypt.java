@@ -11,6 +11,7 @@ public class HashPasswordBcrypt extends SaltablePassword {
 	public HashPasswordBcrypt(LogNow plugin) throws ClassNotFoundException {
 		this.plugin = plugin;
 
+		// check that the library was compiled or not 
 		Class.forName("org.mindrot.jbcrypt.BCrypt");
 	}
 
@@ -19,7 +20,7 @@ public class HashPasswordBcrypt extends SaltablePassword {
 	 */
 	@Override
 	public String generateSalt() {
-		return BCrypt.gensalt(plugin.getSettingConfiguration().get(SettingConfigurationModel.BCRYPT_SALT_ROUNDS).asInt()));
+		return BCrypt.gensalt(plugin.getSettingConfiguration().get(SettingConfigurationModel.BCRYPT_SALT_ROUNDS).asInt());
 	}
 
 	/**
@@ -35,7 +36,7 @@ public class HashPasswordBcrypt extends SaltablePassword {
 	 */
 	@Override
 	public boolean verify(String password, String hash) {
-		return BCrypt.checkpw(password, hash)
+		return BCrypt.checkpw(password, hash);
 	}
 
 }

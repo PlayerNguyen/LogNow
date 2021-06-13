@@ -53,6 +53,9 @@ public class DebugWatcher {
 		}
 	}
 
+	/**
+	 * @return true whether development mode are on, false otherwise
+	 */
 	private boolean isDebugging() {
 		return plugin.isDevelopment();
 	}

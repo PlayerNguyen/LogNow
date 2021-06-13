@@ -4,9 +4,12 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import com.playernguyen.lognow.collector.UserManager;
 import com.playernguyen.lognow.hashes.HashPasswordBcrypt;
 import com.playernguyen.lognow.hashes.InterfaceHashPassword;
+import com.playernguyen.lognow.localize.LocalizeConfiguration;
 import com.playernguyen.lognow.settings.SettingConfiguration;
 import com.playernguyen.lognow.settings.SettingConfigurationModel;
 import com.playernguyen.lognow.watch.DebugWatcher;
@@ -26,26 +29,47 @@ public final class LogNow extends JavaPlugin {
     private boolean isDevelopment = false;
 
     private SettingConfiguration settingConfiguration;
+    private LocalizeConfiguration localizeConfiguration;
     private DebugWatcher debugWatcher;
     private DatabaseHoster databaseHoster;
     private InterfaceHashPassword hashSystem;
+    private UserManager userManager;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         try {
             setupSetting();
+            setupLocalize();
             setupDatabase();
             setupCypher();
+            setupUserManager();
 
-            // test, for debug
+            // test, for development mode
             if (isDevelopment) {
                 testBcrypt();
+                testDatabase();
             }
         } catch (Exception e) {
             // catch all setup error
             e.printStackTrace();
         }
+    }
+
+    private void setupLocalize() throws Exception {
+        this.localizeConfiguration = new LocalizeConfiguration(this);
+    }
+
+    private void testDatabase() throws Exception {
+        userManager.reset();
+        userManager.createUser(UUID.randomUUID(), "12345", "emailller@gmail.com");
+    }
+
+    private void setupUserManager() {
+        // if (userManager == null) {
+        // this.userManager = new UserManager(this);
+        // }
+        this.userManager = new UserManager(this);
     }
 
     /**
@@ -108,7 +132,7 @@ public final class LogNow extends JavaPlugin {
                     "CREATE TABLE IF NOT EXISTS lognow_user (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
                             + "user_id VARCHAR NOT NULL, password VARCHAR NOT NULL, email VARCHAR NOT NULL)");
             this.getDebugWatcher().debug("Creating a lognow_user table...");
-
+            return;
         }
 
         // mysql set up
@@ -134,7 +158,7 @@ public final class LogNow extends JavaPlugin {
             DatabaseQueryBuilder.newInstance(this.getDatabaseHoster()).executeCustomUpdate(
                     "CREATE TABLE IF NOT EXISTS lognow_user (id INT(32) NOT NULL PRIMARY KEY AUTO_INCREMENT, "
                             + "user_id VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL)");
-
+            return;
         }
 
     }
@@ -197,5 +221,13 @@ public final class LogNow extends JavaPlugin {
      */
     public InterfaceHashPassword getHashSystem() {
         return hashSystem;
+    }
+
+    /**
+     * 
+     * @return contains all language configuration
+     */
+    public LocalizeConfiguration getLocalizeConfiguration() {
+        return localizeConfiguration;
     }
 }
